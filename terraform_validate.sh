@@ -15,14 +15,16 @@ done
 for path_uniq in $(echo "${paths[*]}" | tr ' ' '\n' | sort -u); do
   path_uniq="${path_uniq//__REPLACED__SPACE__/ }"
 
+  pushd "$path_uniq" > /dev/null
   if [[ -n "$(find . -maxdepth 1 -name '*.tf' -print -quit)" ]] ; then
-    if ! terraform validate $path_uniq; then
+    if ! terraform validate; then
       error=1
       echo
       echo "Failed path: $path_uniq"
       echo "================================"
     fi
   fi
+  popd > /dev/null
 done
 
 if [[ "${error}" -ne 0 ]] ; then
